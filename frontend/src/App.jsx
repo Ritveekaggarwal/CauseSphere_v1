@@ -1,12 +1,17 @@
-import { Navbar } from "./components/Navbar.jsx";
-import { Hero } from "./components/Hero.jsx";
+import React from 'react'
+import Home from './pages/Home.jsx'
+import Donor from './pages/Donor.jsx'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-function App() {
+const App = () => {
   return (
-    <>
-      <Navbar />
-      <Hero />
-    </>
-  );
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/donor" element={<Donor />} />
+      </Routes>
+    </Router>
+  )
 }
-export default App;
+
+export default App

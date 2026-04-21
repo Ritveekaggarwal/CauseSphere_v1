@@ -35,7 +35,8 @@ export const Navbar = () => {
           {navItems.map((item, i) => (
             <a
               key={item}
-              href={`#${item.toLowerCase()}`}
+              // href={`#${item.toLowerCase()}`}
+              href={`#${item.toLowerCase().replace(/\s+/g, "_")}`}
               className="relative text-sm tracking-widest uppercase text-zinc-400 hover:text-white transition-colors duration-300 group"
             >
               {/* <span className="text-amber-400 mr-2 text-[10px] opacity-60">
@@ -51,7 +52,7 @@ export const Navbar = () => {
         <div className="flex items-center gap-4">
           <a
             href="#donate"
-            className="hidden md:inline-flex items-center gap-2 px-6 py-3 bg-amber-400 text-zinc-950 text-xs tracking-widest uppercase font-bold hover:bg-amber-300 hover:shadow-[0_0_24px_rgba(251,191,36,0.4)] transition-all duration-500 hover:scale-[1.03]"
+            className="hidden md:inline-flex items-center gap-2 px-6 py-3 bg-amber-400 text-zinc-950 text-xs tracking-widest uppercase font-bold hover:bg-amber-400 hover:shadow-[0_0_24px_rgba(251,191,36,0.4)] transition-all duration-500 hover:scale-[1.03]"
           >
             GET STARTED
             <span className="h-px w-6 bg-zinc-950" />
