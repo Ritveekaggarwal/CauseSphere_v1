@@ -1,16 +1,115 @@
-# React + Vite
+# 🌍 CauseSphere
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CauseSphere is a transparent fundraising platform built using the MERN stack (MongoDB, Express, React, Node.js). It connects donors directly with individuals or NGOs in need, ensuring trust, traceability, and real-time insights into every campaign.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Features
 
-## React Compiler
+### 👤 Authentication
+- JWT-based login/signup
+- Google OAuth integration (optional)
+- Single user can act as both donor and fundraiser
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+### 📢 Campaign Management
+- Multi-step fundraiser creation form:
+  1. Basic Info
+  2. Campaign Details
+  3. Bank Details
+  4. Document Upload
+- Campaign lifecycle:
+  - Draft → Pending → Approved → Active
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+### ✅ Verification System
+- Admin approval before campaign goes live
+- Document validation (ID, medical proof, etc.)
+- Verified badge for trusted campaigns
+
+---
+
+### 💳 Donation System
+- Payment gateway integration (Razorpay test mode)
+- Secure transaction tracking (no fake receipts)
+- Each donation linked with:
+  - Payment ID
+  - Order ID
+  - Campaign ID
+
+---
+
+### 📊 Dashboard & Analytics
+#### Fundraiser Dashboard:
+- Total funds raised
+- Daily donation graph
+- Recent donors list
+- Campaign updates
+
+#### Donor Dashboard:
+- Donation history
+- Downloadable receipts
+
+---
+
+### 📄 Receipt Generation
+- Auto-generated PDF receipts
+- Includes donor info, campaign details, and transaction ID
+
+---
+
+### 🔍 Campaign Browsing
+- Filter by category (Hunger, Medical, Climate, Disaster, Animals)
+- Search functionality
+- Featured campaigns
+
+---
+
+### 🔔 Notifications (Optional)
+- Donation confirmation
+- Campaign updates
+
+---
+
+## 🧠 MongoDB Concepts Used
+
+- **CRUD Operations**
+- **Indexing**
+  - email
+  - category
+  - campaignId
+  - createdAt
+- **Aggregation Pipelines**
+  - Total donations per campaign
+  - Daily donation trends
+  - Top campaigns
+- **Array Operations**
+  - `$push` (add updates/donors)
+  - `$pop` (remove last update)
+  - `$pull` (remove specific donor)
+- **Sharding (Conceptual)**
+  - Partition by `campaignId`
+
+---
+
+## 🏗️ Tech Stack
+
+### Frontend
+- React.js
+- Tailwind CSS
+
+### Backend
+- Node.js
+- Express.js
+
+### Database
+- MongoDB
+
+### Payment
+- Razorpay (Test Mode)
+
+---
+
+## 📂 Project Structure
