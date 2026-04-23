@@ -21,7 +21,7 @@ export const CampaignCard = ({ c }) => {
   const pct = Math.min(100, Math.round((c.raised / c.target) * 100));
 
   return (
-    <article className="group relative bg-[var(--bg-secondary)] rounded-3xl overflow-hidden border border-[var(--border)] hover:border-amber-400/40 hover:-translate-y-2 hover:shadow-[0_24px_48px_rgba(0,0,0,0.35)] transition-all duration-500 flex flex-col">
+    <article className="group relative bg-(--bg-secondary) rounded-3xl overflow-hidden border border-[var(--border)] hover:border-amber-400/40 hover:-translate-y-2 hover:shadow-[0_24px_48px_rgba(0,0,0,0.35)] transition-all duration-500 flex flex-col">
       {/* Cover image */}
       <div className="relative aspect-[4/5] overflow-hidden">
         <img
@@ -53,7 +53,7 @@ export const CampaignCard = ({ c }) => {
         </button>
 
         {/* Floating info panel */}
-        <div className="absolute inset-x-4 bottom-4 rounded-2xl bg-[var(--bg-secondary)]/95 backdrop-blur-md border border-[var(--border)] p-5 space-y-4">
+        <div className="absolute inset-x-4 bottom-4 rounded-2xl bg-(--bg-secondary)/95 backdrop-blur-md border border-[var(--border)] p-5 space-y-4">
           {/* Title + target */}
           <div className="flex items-start justify-between gap-3">
             <h3 className="font-serif text-xl leading-tight text-[var(--text-primary)] line-clamp-2">

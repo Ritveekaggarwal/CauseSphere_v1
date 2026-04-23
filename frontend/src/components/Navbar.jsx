@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
+import Home from "../pages/Home.jsx";
+import { Link } from "react-router-dom";
 
 const navItems = ["About", "Impact", "Discover", "Start a Campaign"];
 
@@ -23,12 +25,12 @@ export const Navbar = () => {
     >
       <div className="mx-auto max-w-400 px-6 md:px-12 flex items-center justify-between">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-3 group">
+        <Link to="/" className="flex items-center gap-3 group">
           <div className="h-2 w-2 bg-amber-400 group-hover:scale-150 transition-transform duration-300" />
           <span className="font-serif text-2xl font-medium tracking-tight text-white">
             CAUSESPHERE<span className="text-amber-400">.</span>
           </span>
-        </a>
+        </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-10">
