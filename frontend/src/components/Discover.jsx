@@ -67,7 +67,7 @@ export const Discover = () => {
               <span className="italic">to be answered.</span>
             </h2>
           </div>
-          <Link to="/donor"
+          <Link to="/"
             className="group hidden md:inline-flex items-center gap-3 px-6 py-3 bg-amber-400 text-zinc-950 text-xs tracking-widest uppercase font-bold hover:bg-amber-400 hover:text-zinc-950 hover:shadow-[0_0_24px_rgba(251,191,36,0.4)] transition-all duration-500 hover:scale-[1.03]"
           >
             View all campaigns
