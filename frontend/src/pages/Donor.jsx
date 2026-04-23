@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Search, ChevronLeft, ChevronRight, SlidersHorizontal, Loader2, AlertCircle } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
-import { CampaignCard } from "../components/CampaignCard";
+import  CampaignCard  from "../components/CampaignCard";
 import { useCampaigns } from "../hooks/useCampaigns";
 
 const CATEGORIES = ["All", "Education", "Clean Water", "Climate", "Health", "Disaster Relief", "Animal Welfare"];
