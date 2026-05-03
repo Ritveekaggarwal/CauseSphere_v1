@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { Navbar } from "../components/Navbar";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 export default function Login() {
@@ -12,17 +13,16 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
+     const res = await fetch("/api/auth/login", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  credentials: "include", // 🔥 VERY IMPORTANT
+  body: JSON.stringify(form),
+});
 
-      const data = await res.json();
-
-      localStorage.setItem("token", data.token);
+      // localStorage.setItem("token", data.token);
       navigate("/dashboard");
 
     } catch (err) {
@@ -48,7 +48,10 @@ export default function Login() {
   );
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-[#0b0b0c] text-white">
+    <>  
+
+    <Navbar />
+    <div className="min-h-screen grid lg:grid-cols-2 bg-[#0b0b0c] pt-20 text-white">
 
       {/* LEFT SIDE */}
       <div className="hidden lg:flex relative px-20 items-center">
@@ -143,5 +146,6 @@ export default function Login() {
         </div>
       </div>
     </div>
+    </>
   );
 }

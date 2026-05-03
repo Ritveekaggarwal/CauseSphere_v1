@@ -3,7 +3,8 @@ import { Hero } from "../components/Hero";
 import { About } from "../components/About";
 import { Impact } from "../components/Impact";
 import { Discover } from "../components/Discover";
-import { StartCampaign } from "../components/start_a_campaign";
+// import { StartCampaign } from "../components/start_a_campaign";
+import { Start_a_Campaign } from "../components/start_a_campaign";
 import { Footer } from "../components/Footer";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -30,7 +31,7 @@ function Home() {
         <About />
         <Impact />
         <Discover />
-        <StartCampaign />
+        <Start_a_Campaign />
       </main>
       <Footer />
     </div>

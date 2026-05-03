@@ -7,7 +7,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import StartCampaign from "./pages/StartCampaign.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
-import { Navbar } from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
 
@@ -15,18 +16,36 @@ const App = () => {
   return (
     <>
       <Toaster />
-      
+
       <Router>
-        {/* <Navbar /> optional, if you want it globally */}
         <Routes>
+
+          {/* ✅ PUBLIC ROUTES */}
           <Route path="/" element={<Home />} />
           <Route path="/donor" element={<Donor />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/start-campaign" element={<StartCampaign />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+
+          {/* 🔒 PROTECTED ROUTES */}
+          <Route
+            path="/start-campaign"
+            element={
+              <ProtectedRoute>
+                <StartCampaign />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
 
         </Routes>
       </Router>

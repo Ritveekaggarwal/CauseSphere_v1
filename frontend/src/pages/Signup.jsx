@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import {Navbar} from "../components/Navbar";
 import { Eye, EyeOff, Mail, User, Phone, MapPin, Lock } from "lucide-react";
 
 const Signup = () => {
@@ -41,7 +42,11 @@ const Signup = () => {
   );
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2 bg-[#0b0b0c] text-white">
+<>
+    <Navbar />
+
+
+    <div className="min-h-screen grid lg:grid-cols-2 bg-[#0b0b0c] pt-20 text-white">
 
       {/* LEFT */}
       <div className="hidden lg:flex relative px-20 items-center">
@@ -176,6 +181,7 @@ const Signup = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -3,6 +3,16 @@ import { Menu, X } from "lucide-react";
 import Home from "../pages/Home.jsx";
 import { Link } from "react-router-dom";
 
+
+// useEffect(() => {
+//   const token = localStorage.getItem("token");
+//   const name = localStorage.getItem("name"); // store this at login
+
+//   if (token && name) {
+//     setUser({ name });
+//   }
+// }, []);
+
 // const navItems = ["About", "Impact", "Discover", "Start a Campaign"];
 const navItems = [
   { name: "About", path: "/#about" },
@@ -15,11 +25,26 @@ export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
+const [user, setUser] = useState(null);
+const [dropdown, setDropdown] = useState(false);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+useEffect(() => {
+  fetch("/api/auth/me", {
+    credentials: "include",
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.user) setUser(data.user);
+    })
+    .catch(() => setUser(null));
+}, []);
+
 
   return (
     <header
@@ -54,22 +79,65 @@ export const Navbar = () => {
         </nav>
 
         {/* CTA + Mobile Toggle */}
-        <div className="flex items-center gap-4">
-          <a
-            href="#donate"
-            className="hidden md:inline-flex items-center gap-2 px-6 py-3 bg-amber-400 text-zinc-950 text-xs tracking-widest uppercase font-bold hover:bg-amber-400 hover:shadow-[0_0_24px_rgba(251,191,36,0.4)] transition-all duration-500 hover:scale-[1.03]"
-          >
-            GET STARTED
-            <span className="h-px w-6 bg-zinc-950" />
-          </a>
-          <button
-            onClick={() => setOpen(!open)}
-            className="md:hidden text-white"
-            aria-label="Menu"
-          >
-            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
+
+
+      <div className="relative hidden md:block">
+  {!user ? (
+    <Link
+      to="/login"
+      className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 text-zinc-950 text-xs tracking-widest uppercase font-bold hover:shadow-[0_0_24px_rgba(251,191,36,0.4)] transition-all duration-500 hover:scale-[1.03]"
+    >
+      GET STARTED
+      <span className="h-px w-6 bg-zinc-950" />
+    </Link>
+  ) : (
+    <>
+      {/* USER BUTTON */}
+      <button
+        onClick={() => setDropdown(!dropdown)}
+        className="px-5 py-3 bg-amber-400 text-black text-xs uppercase font-bold"
+      >
+        {user.name}
+      </button>
+
+      {/* DROPDOWN */}
+      {dropdown && (
+  <div className="absolute right-0 mt-2 w-40 bg-zinc-900 border border-zinc-800 rounded-lg shadow-lg overflow-hidden">
+
+    <Link
+      to="/dashboard"
+      onClick={() => setDropdown(false)}
+      className="block px-4 py-3 text-sm text-white hover:bg-zinc-800"
+    >
+      Dashboard
+    </Link>
+
+    {/* ✅ THIS IS WHERE LOGOUT GOES */}
+    <button
+      onClick={async () => {
+        await fetch("/api/auth/logout", {
+          method: "POST",
+          credentials: "include",
+        });
+        window.location.href = "/login";
+      }}
+      className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-zinc-800"
+    >
+      Logout
+    </button>
+
+  </div>
+)}
+
+
+
+    </>
+  )}
+</div>
+
+
+
+
       </div>
 
       {/* Mobile Menu */}

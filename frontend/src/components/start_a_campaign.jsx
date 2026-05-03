@@ -1,4 +1,7 @@
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+// import StartCampaign from "../pages/StartCampaign.jsx";
+
 
 const steps = [
   {
@@ -23,7 +26,7 @@ const steps = [
   },
 ];
 
-export const StartCampaign  = () => {
+export const Start_a_Campaign  = () => {
   return (
     <section
       // id="start"
@@ -77,13 +80,13 @@ export const StartCampaign  = () => {
 
         {/* CTA */}
         <div className="mt-24 flex flex-col items-center text-center">
-          <a
-            href="#"
+          <Link
+            to="/start-campaign"
             className="group inline-flex items-center gap-4 px-10 py-5 bg-amber-400 text-zinc-950 text-xs tracking-widest uppercase font-bold hover:bg-amber-400 hover:shadow-[0_0_32px_rgba(251,191,36,0.45)] transition-all duration-500 hover:scale-[1.03]"
           >
             Start your campaign
             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-500" />
-          </a>
+          </Link>
           <p className="mt-6 text-[10px] tracking-widest uppercase text-zinc-500">
             Free to start · No platform fee · Verified within 48 hours
           </p>
