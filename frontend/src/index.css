@@ -4,3 +4,25 @@
   --font-serif: "Playfair Display", serif;
 }
 
+:root {
+  --bg-primary: #09090b;     /* zinc-950 */
+  --bg-secondary: #18181b;   /* zinc-900 */
+  --border: #27272a;         /* zinc-800 */
+
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa; /* zinc-400 */
+  --text-muted: #71717a;     /* zinc-500 */
+
+  --accent: #f59e0b;         /* amber-400 */
+}
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+.input {
+  @apply w-full px-4 py-3 bg-transparent border border-[var(--border)] text-white outline-none focus:border-[var(--accent)];
+}
+
+.btn {
+  @apply px-6 py-3 bg-[var(--accent)] text-black font-bold uppercase tracking-widest hover:opacity-90;
+}

@@ -1,17 +1,35 @@
-import React from 'react'
-import Home from './pages/Home.jsx'
-import Donor from './pages/Donor.jsx'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import React from "react";
+import Home from "./pages/Home.jsx";
+import Donor from "./pages/Donor.jsx";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import StartCampaign from "./pages/StartCampaign.jsx";
+import { Navbar } from "./components/Navbar";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "sonner";
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/donor" element={<Donor />} />
-      </Routes>
-    </Router>
-  )
-}
+    <>
+      <Toaster />
+      
+      <Router>
+        {/* <Navbar /> optional, if you want it globally */}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/donor" element={<Donor />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/start-campaign" element={<StartCampaign />} />
 
-export default App
+        </Routes>
+      </Router>
+    </>
+  );
+};
+
+export default App;

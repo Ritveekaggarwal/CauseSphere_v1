@@ -67,7 +67,7 @@ export const Footer = () => {
       {/* Bottom bar */}
       <div className="border-t border-zinc-800">
         <div className="mx-auto max-w-400 px-6 md:px-12 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] tracking-widest uppercase text-zinc-500">
-          <span>© {new Date().getFullYear()} CauseSphere Foundation</span>
+          {/* <span>© {new Date().getFullYear()} CauseSphere Foundation</span> */}
           <span className="text-amber-400">Compassion, made traceable.</span>
         </div>
       </div>

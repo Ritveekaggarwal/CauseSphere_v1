@@ -16,7 +16,7 @@ const urgencyDot = {
   High: "bg-red-400",
 };
 
-export default Campaigncard = ({ c }) => {
+const Campaigncard = ({ c }) => {
   const [saved, setSaved] = useState(false);
   const pct = Math.min(100, Math.round((c.raised / c.target) * 100));
 
@@ -116,3 +116,5 @@ export default Campaigncard = ({ c }) => {
     </article>
   );
 };
+
+export default Campaigncard;

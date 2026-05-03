@@ -3,7 +3,13 @@ import { Menu, X } from "lucide-react";
 import Home from "../pages/Home.jsx";
 import { Link } from "react-router-dom";
 
-const navItems = ["About", "Impact", "Discover", "Start a Campaign"];
+// const navItems = ["About", "Impact", "Discover", "Start a Campaign"];
+const navItems = [
+  { name: "About", path: "/#about" },
+  { name: "Impact", path: "/#impact" },
+  { name: "Discover", path: "/#discover" },
+  { name: "Start a Campaign", path: "/signup" },
+];
 
 export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -17,11 +23,10 @@ export const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-zinc-950/85 backdrop-blur-md border-b border-zinc-800/60 py-4"
-          : "bg-transparent py-6"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
+        ? "bg-zinc-950/85 backdrop-blur-md border-b border-zinc-800/60 py-4"
+        : "bg-transparent py-6"
+        }`}
     >
       <div className="mx-auto max-w-400 px-6 md:px-12 flex items-center justify-between">
         {/* Logo */}
@@ -35,19 +40,17 @@ export const Navbar = () => {
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-10">
           {navItems.map((item, i) => (
-            <a
-              key={item}
-              // href={`#${item.toLowerCase()}`}
-              href={`#${item.toLowerCase().replace(/\s+/g, "_")}`}
-              className="relative text-sm tracking-widest uppercase text-zinc-400 hover:text-white transition-colors duration-300 group"
+            <Link
+              key={item.name}
+              to={item.path}
+              onClick={() => setOpen(false)}
+              className="text-sm tracking-widest uppercase text-zinc-400 hover:text-white transition-colors"
             >
-              {/* <span className="text-amber-400 mr-2 text-[10px] opacity-60">
-                0{i + 1}
-              </span> */}
-              {item}
-              <span className="absolute -bottom-2 left-0 h-px w-0 bg-amber-400 transition-all duration-500 group-hover:w-full" />
-            </a>
+              {/* <span className="text-amber-400 mr-2 text-[10px]">0{i + 1}</span> */}
+              {item.name}
+            </Link>
           ))}
+
         </nav>
 
         {/* CTA + Mobile Toggle */}
@@ -74,15 +77,15 @@ export const Navbar = () => {
         <div className="md:hidden absolute top-full left-0 right-0 bg-zinc-950 border-b border-zinc-800 animate-[fadeIn_0.2s_ease]">
           <nav className="flex flex-col px-6 py-6 gap-5">
             {navItems.map((item, i) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
+              <Link
+                key={item.name}
+                to={item.path}
                 onClick={() => setOpen(false)}
                 className="text-sm tracking-widest uppercase text-zinc-400 hover:text-white transition-colors"
               >
                 <span className="text-amber-400 mr-2 text-[10px]">0{i + 1}</span>
-                {item}
-              </a>
+                {item.name}
+              </Link>
             ))}
             <a
               href="#donate"
