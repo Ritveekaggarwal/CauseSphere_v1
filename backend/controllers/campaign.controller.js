@@ -1,27 +1,35 @@
 import Campaign from "../models/campaign.model.js";
+import { categoryImages } from "../utils/categoryImage.js";
 
-/* ➕ CREATE CAMPAIGN (protected) */
+/* ➕ CREATE CAMPAIGN */
 export const createCampaign = async (req, res) => {
   try {
     const {
-      title,
+      name,
       description,
+      goal,
       category,
-      urgency,
-      targetAmount,
-      image,
       endDate,
+      email,
+      phone,
+      payoutMethod,
+      upiId,
+      idDoc,
     } = req.body;
 
     const campaign = await Campaign.create({
-      title,
+      name,
       description,
+      goal,
       category,
-      urgency,
-      targetAmount,
-      image,
+      image: categoryImages[category], // 🔥 auto image
       endDate,
-      createdBy: req.user._id, // from auth middleware
+      email,
+      phone,
+      payoutMethod,
+      upiId,
+      idDoc,
+      createdBy: req.user._id,
     });
 
     res.status(201).json(campaign);
@@ -30,57 +38,33 @@ export const createCampaign = async (req, res) => {
   }
 };
 
-/* 📥 GET ALL CAMPAIGNS (public) */
+/* 📥 GET ALL */
 export const getCampaigns = async (req, res) => {
   try {
     const campaigns = await Campaign.find({ isActive: true })
-      .populate("createdBy", "name");
+      .populate("createdBy", "firstName lastName");
 
     res.json(campaigns);
-  } catch (err) {
+  } catch {
     res.status(500).json({ msg: "Fetch failed" });
   }
 };
 
-/* 📄 GET SINGLE CAMPAIGN */
+/* 📄 GET ONE */
 export const getCampaignById = async (req, res) => {
-  try {
-    const campaign = await Campaign.findById(req.params.id)
-      .populate("createdBy", "name");
-
-    if (!campaign) {
-      return res.status(404).json({ msg: "Not found" });
-    }
-
-    res.json(campaign);
-  } catch (err) {
-    res.status(500).json({ msg: "Error" });
-  }
-};
-
-/* ✏️ UPDATE CAMPAIGN (owner only) */
-export const updateCampaign = async (req, res) => {
   try {
     const campaign = await Campaign.findById(req.params.id);
 
     if (!campaign) return res.status(404).json({ msg: "Not found" });
 
-    if (campaign.createdBy.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ msg: "Not allowed" });
-    }
-
-    Object.assign(campaign, req.body);
-
-    await campaign.save();
-
     res.json(campaign);
-  } catch (err) {
-    res.status(500).json({ msg: "Update failed" });
+  } catch {
+    res.status(500).json({ msg: "Error" });
   }
 };
 
-/* ❌ DELETE (or CLOSE) CAMPAIGN */
-export const deleteCampaign = async (req, res) => {
+/* ❌ CLOSE CAMPAIGN */
+export const closeCampaign = async (req, res) => {
   try {
     const campaign = await Campaign.findById(req.params.id);
 
@@ -94,7 +78,7 @@ export const deleteCampaign = async (req, res) => {
     await campaign.save();
 
     res.json({ msg: "Campaign closed" });
-  } catch (err) {
-    res.status(500).json({ msg: "Delete failed" });
+  } catch {
+    res.status(500).json({ msg: "Error" });
   }
 };

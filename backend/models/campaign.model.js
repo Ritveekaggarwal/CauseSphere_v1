@@ -2,17 +2,61 @@ import mongoose from "mongoose";
 
 const campaignSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true, trim: true },
-    description: { type: String, required: true },
-    category: { type: String, required: true }, // e.g. Health, Education
-    urgency: { type: String, enum: ["low", "medium", "high"], default: "medium" },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-    targetAmount: { type: Number, required: true },
-    raisedAmount: { type: Number, default: 0 },
+    description: {
+      type: String,
+      required: true,
+    },
 
-    image: { type: String }, // URL (you can add upload later)
+    goal: {
+      type: Number,
+      required: true,
+    },
 
-    endDate: { type: Date, required: true },
+    category: {
+      type: String,
+      enum: ["medical", "education", "animals", "environment", "ngo", "other"],
+      required: true,
+    },
+
+    image: {
+      type: String, // auto from category
+    },
+
+    endDate: {
+      type: Date,
+      required: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+    },
+
+    phone: {
+      type: String,
+      required: true,
+    },
+
+    payoutMethod: {
+      type: String,
+      enum: ["upi"],
+      default: "upi",
+    },
+
+    upiId: {
+      type: String,
+      required: true,
+    },
+
+    idDoc: {
+      type: String, // later for upload
+    },
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -20,7 +64,15 @@ const campaignSchema = new mongoose.Schema(
       required: true,
     },
 
-    isActive: { type: Boolean, default: true },
+    raisedAmount: {
+      type: Number,
+      default: 0,
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );
