@@ -104,13 +104,23 @@ const Campaigncard = ({ c }) => {
           </div>
 
           {/* CTA */}
-          <a
+          {/* <a
             href={`/campaign/${c._id || c.id}`}
             className="group/btn flex items-center justify-center gap-2 w-full py-3 rounded-full bg-[var(--text-primary)] text-[var(--bg-primary)] text-xs font-semibold tracking-wider uppercase hover:bg-amber-400 hover:text-zinc-950 transition-colors"
           >
             View More
             <ArrowUpRight className="h-4 w-4 group-hover/btn:rotate-45 transition-transform duration-300" />
-          </a>
+          </a> */}
+
+<button
+  onClick={() => c.onOpen?.(c)}
+  className="group/btn flex items-center justify-center gap-2 w-full py-3 rounded-full bg-[var(--text-primary)] text-[var(--bg-primary)] text-xs font-semibold tracking-wider uppercase hover:bg-amber-400 hover:text-zinc-950 transition-colors"
+>
+            <ArrowUpRight className="h-4 w-4 group-hover/btn:rotate-45 transition-transform duration-300" />
+
+  View More
+</button>
+
         </div>
       </div>
     </article>

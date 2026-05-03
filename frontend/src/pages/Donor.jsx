@@ -1,9 +1,18 @@
 import { useState } from "react";
-import { Search, ChevronLeft, ChevronRight, SlidersHorizontal, Loader2, AlertCircle } from "lucide-react";
+import {
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  SlidersHorizontal,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
+
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
-import  Campaigncard  from "../components/Campaigncard.jsx";
-// import { useCampaigns } from "../hooks/useCampaigns";
+import Campaigncard from "../components/Campaigncard.jsx";
+import CampaignDetailModal from "../components/CampaignDetailModal.jsx";
+
 import mockCampaigns from "../data/mockCampaigns";
 
 const CATEGORIES = ["All", "Education", "Clean Water", "Climate", "Health", "Disaster Relief", "Animal Welfare"];
@@ -11,29 +20,24 @@ const URGENCIES  = ["All", "Low", "Medium", "High"];
 const SORTS      = ["Most Funded", "Newest", "Most Urgent", "Ending Soon"];
 
 const Donor = () => {
-  const [query,    setQuery]    = useState("");
+  const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
-  const [urgency,  setUrgency]  = useState("All");
-  const [sort,     setSort]     = useState("Most Funded");
-  const [page,     setPage]     = useState(1);
+  const [urgency, setUrgency] = useState("All");
+  const [sort, setSort] = useState("Most Funded");
+  const [page, setPage] = useState(1);
 
-  // All filtering/sorting/pagination handled by the backend
-  // const { campaigns, total, totalPages, loading, error, refetch } = useCampaigns({
-  //   page,
-  //   category,
-  //   urgency,
-  //   sort,
-  //   query,
-  // });
+  // ✅ MODAL STATE
+  const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [open, setOpen] = useState(false);
 
-
+  // ✅ DEFINE BEFORE USE (FIXED BUG)
   const campaigns = mockCampaigns;
-const total = mockCampaigns.length;
-const totalPages = 1;
-const loading = false;
-const error = null;
+  const total = campaigns.length;
+  const totalPages = 1;
+  const loading = false;
+  const error = null;
 
-  // Reset to page 1 whenever a filter changes
+  // handlers
   const handleCategory = (c) => { setCategory(c); setPage(1); };
   const handleUrgency  = (u) => { setUrgency(u);  setPage(1); };
   const handleSort     = (s) => { setSort(s);     setPage(1); };
@@ -46,222 +50,118 @@ const error = null;
     >
       <Navbar />
 
-      {/* ── PAGE HEADER ───────────────────────────────────────────────── */}
+      {/* ── HEADER ───────────────── */}
       <section className="pt-36 md:pt-44 pb-12 border-b border-(--border)">
         <div className="mx-auto max-w-400 px-6 md:px-12">
+
           <p className="text-[10px] tracking-widest uppercase text-amber-400 mb-6 flex items-center gap-3">
             <span className="h-px w-8 bg-amber-400" />
             For Donors
           </p>
 
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12">
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[0.95] font-light text-(--text-primary) max-w-3xl">
+            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[0.95] font-light max-w-3xl">
               Find a cause
               <br />
               <span className="italic">worth your kindness.</span>
             </h1>
             <p className="text-sm text-(--text-secondary) max-w-md leading-relaxed">
-              Browse verified campaigns from across the country. Search, filter, and sort
-              to find the story that moves you — then move it forward.
+              Browse verified campaigns from across the country.
             </p>
           </div>
 
-          {/* ── SEARCH + SORT ─────────────────────────────────────────── */}
+          {/* SEARCH */}
           <div className="flex flex-col md:flex-row gap-4">
-            {/* Search */}
             <div className="relative flex-1">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-(--text-secondary)" />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4" />
               <input
                 value={query}
                 onChange={handleQuery}
-                placeholder="Search by name, cause, or keyword…"
-                className="w-full h-14 pl-14 pr-5 rounded-full bg-(--bg-secondary) border border-(--border) text-sm text-(--text-primary) placeholder:text-(--text-muted) focus:outline-none focus:border-amber-400/60 transition-colors"
+                placeholder="Search..."
+                className="w-full h-14 pl-14 pr-5 rounded-full bg-(--bg-secondary) border border-(--border)"
               />
             </div>
 
-            {/* Sort */}
-            <div className="relative">
-              <SlidersHorizontal className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-(--text-secondary) pointer-events-none" />
-              <select
-                value={sort}
-                onChange={(e) => handleSort(e.target.value)}
-                className="h-14 pl-12 pr-10 rounded-full bg-(--bg-secondary) border border-(--border) text-sm text-(--text-primary) appearance-none cursor-pointer focus:outline-none focus:border-amber-400/60 transition-colors min-w-50"
-              >
-                {SORTS.map((s) => (
-                  <option key={s} value={s}>Sort: {s}</option>
-                ))}
-              </select>
-            </div>
+            <select
+              value={sort}
+              onChange={(e) => handleSort(e.target.value)}
+              className="h-14 px-4 rounded-full bg-(--bg-secondary) border border-(--border)"
+            >
+              {SORTS.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
           </div>
 
-          {/* ── FILTER CHIPS ──────────────────────────────────────────── */}
-          <div className="mt-8 space-y-4">
-            {/* Category */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] tracking-widest uppercase text-(--text-muted) mr-2">
-                Category
-              </span>
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => handleCategory(c)}
-                  className={`px-4 py-2 rounded-full text-xs tracking-wider uppercase border transition-all ${
-                    category === c
-                      ? "bg-amber-400 text-zinc-950 border-amber-400"
-                      : "border-(--border) text-(--text-secondary) hover:text-(--text-primary) hover:border-(--text-secondary)/40"
-                  }`}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-
-            {/* Urgency */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] tracking-widests uppercase text-(--text-muted) mr-2 tracking-widest">
-                Urgency
-              </span>
-              {URGENCIES.map((u) => (
-                <button
-                  key={u}
-                  onClick={() => handleUrgency(u)}
-                  className={`px-4 py-2 rounded-full text-xs tracking-wider uppercase border transition-all ${
-                    urgency === u
-                      ? "bg-(--text-primary) text-(--bg-primary) border-(--text-primary)"
-                      : "border-(--border) text-(--text-secondary) hover:text-(--text-primary) hover:border-(--text-secondary)/40"
-                  }`}
-                >
-                  {u}
-                </button>
-              ))}
-            </div>
+          {/* CATEGORY */}
+          <div className="mt-8 flex flex-wrap gap-2">
+            {CATEGORIES.map((c) => (
+              <button
+                key={c}
+                onClick={() => handleCategory(c)}
+                className={`px-4 py-2 rounded-full text-xs ${
+                  category === c
+                    ? "bg-amber-400 text-black"
+                    : "border border-(--border)"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── CAMPAIGN GRID ─────────────────────────────────────────────── */}
-      <section className="py-16 md:py-24">
+      {/* ── GRID ───────────────── */}
+      <section className="py-16">
         <div className="mx-auto max-w-400 px-6 md:px-12">
 
-          {/* Result count */}
           {!loading && !error && (
-            <div className="flex items-baseline justify-between mb-10">
-              <p className="text-sm text-(--text-secondary)">
-                <span className="text-(--text-primary) font-semibold">{total}</span> campaigns found
-              </p>
-              <p className="text-[10px] tracking-widest uppercase text-(--text-muted)">
-                {/* Page {page} of {totalPages} */}
-              </p>
-            </div>
+            <p className="mb-8 text-sm">
+              <span className="font-semibold">{total}</span> campaigns found
+            </p>
           )}
 
-          {/* ── LOADING STATE ── */}
           {loading && (
-            <div className="flex flex-col items-center justify-center py-40 gap-4">
-              <Loader2 className="h-8 w-8 text-amber-400 animate-spin" />
-              <p className="text-sm text-(--text-secondary) tracking-widest uppercase">
-                Loading campaigns…
-              </p>
+            <div className="flex justify-center py-20">
+              <Loader2 className="animate-spin text-amber-400" />
             </div>
           )}
 
-          {/* ── ERROR STATE ── */}
-          {!loading && error && (
-            <div className="flex flex-col items-center justify-center py-40 gap-6 text-center">
-              <AlertCircle className="h-10 w-10 text-red-400" />
-              <div>
-                <p className="font-serif text-2xl text-(--text-primary) mb-2">
-                  Something went wrong.
-                </p>
-                <p className="text-sm text-(--text-secondary) mb-6">{error}</p>
-                <button
-                  onClick={refetch}
-                  className="px-6 py-3 bg-amber-400 text-zinc-950 text-xs tracking-widest uppercase font-bold hover:bg-amber-300 transition-colors"
-                >
-                  Try again
-                </button>
-              </div>
+          {error && (
+            <div className="text-center py-20">
+              <AlertCircle className="mx-auto mb-4" />
+              <p>{error}</p>
             </div>
           )}
 
-          {/* ── EMPTY STATE ── */}
-          {!loading && !error && campaigns.length === 0 && (
-            <div className="py-32 text-center">
-              <p className="font-serif text-3xl text-(--text-primary) mb-3">
-                No campaigns match your search.
-              </p>
-              <p className="text-sm text-(--text-secondary)">
-                Try adjusting your filters or keywords.
-              </p>
-            </div>
-          )}
-
-          {/* ── CARDS ── */}
+          {/* ✅ FIXED CARD CLICK */}
           {!loading && !error && campaigns.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {campaigns.map((c) => (
-                <Campaigncard key={c._id} c={c} />
+                <Campaigncard
+                  key={c._id || c.id}
+                  c={{
+                    ...c,
+                    onOpen: (data) => {
+                      setSelectedCampaign(data);
+                      setOpen(true);
+                    },
+                  }}
+                />
               ))}
             </div>
           )}
 
-          {/* ── PAGINATION ── */}
-          {!loading && !error && totalPages > 1 && (
-            <div className="mt-16 flex items-center justify-center gap-2">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className="h-11 w-11 rounded-full border border-(--border) flex items-center justify-center text-(--text-primary) hover:border-amber-400 hover:text-amber-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                aria-label="Previous page"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-
-              {Array.from({ length: totalPages }).map((_, i) => {
-                const n = i + 1;
-                // Show max 7 pages with ellipsis logic
-                const show =
-                  n === 1 ||
-                  n === totalPages ||
-                  (n >= page - 2 && n <= page + 2);
-                if (!show) {
-                  // Show a single ellipsis between gaps
-                  if (n === page - 3 || n === page + 3) {
-                    return (
-                      <span key={n} className="text-(--text-muted) px-1 text-sm">
-                        …
-                      </span>
-                    );
-                  }
-                  return null;
-                }
-                return (
-                  <button
-                    key={n}
-                    onClick={() => setPage(n)}
-                    className={`h-11 min-w-11 px-3 rounded-full text-xs tracking-wider transition-all ${
-                      page === n
-                        ? "bg-amber-400 text-zinc-950 font-bold"
-                        : "border border-(--border) text-(--text-secondary) hover:text-(--text-primary) hover:border-(--text-secondary)/40"
-                    }`}
-                  >
-                    {String(n).padStart(2, "0")}
-                  </button>
-                );
-              })}
-
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className="h-11 w-11 rounded-full border border-(--border) flex items-center justify-center text-(--text-primary) hover:border-amber-400 hover:text-amber-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                aria-label="Next page"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          )}
         </div>
       </section>
+
+      {/* ✅ FIXED MODAL */}
+      <CampaignDetailModal
+        campaign={selectedCampaign}
+        open={open}
+        onClose={() => setOpen(false)}
+      />
 
       <Footer />
     </main>
@@ -269,5 +169,3 @@ const error = null;
 };
 
 export default Donor;
-
-
