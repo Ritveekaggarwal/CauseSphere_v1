@@ -26,7 +26,7 @@ const steps = [
   },
 ];
 
-export const Start_a_Campaign  = () => {
+export const Start_a_Campaign = () => {
   return (
     <section
       // id="start"
@@ -82,6 +82,13 @@ export const Start_a_Campaign  = () => {
         <div className="mt-24 flex flex-col items-center text-center">
           <Link
             to="/start-campaign"
+            onClick={() => {
+              if (!user) {
+                navigate("/login", { state: { from: "/start-campaign" } });
+              } else {
+                navigate("/start-campaign");
+              }
+            }}
             className="group inline-flex items-center gap-4 px-10 py-5 bg-amber-400 text-zinc-950 text-xs tracking-widest uppercase font-bold hover:bg-amber-400 hover:shadow-[0_0_32px_rgba(251,191,36,0.45)] transition-all duration-500 hover:scale-[1.03]"
           >
             Start your campaign

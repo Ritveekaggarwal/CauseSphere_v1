@@ -3,6 +3,26 @@ import { Link, useNavigate } from "react-router-dom";
 import {Navbar} from "../components/Navbar";
 import { Eye, EyeOff, Mail, User, Phone, MapPin, Lock } from "lucide-react";
 
+
+
+
+const Input = ({ label, icon, rightIcon, ...props }) => (
+    <div className="space-y-1">
+      <label className="text-[11px] tracking-[0.2em] text-gray-500 uppercase">
+        {label}
+      </label>
+
+      <div className="flex items-center border border-white/10 rounded-md px-3 py-3 bg-black/40 focus-within:border-yellow-500 transition">
+        {icon && <span className="mr-2 text-gray-500">{icon}</span>}
+        <input
+          {...props}
+          className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-500"
+        />
+        {rightIcon && <span className="ml-2 cursor-pointer text-gray-500">{rightIcon}</span>}
+      </div>
+    </div>
+  );
+
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -24,22 +44,7 @@ const Signup = () => {
   const set = (k) => (e) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  const Input = ({ label, icon, rightIcon, ...props }) => (
-    <div className="space-y-1">
-      <label className="text-[11px] tracking-[0.2em] text-gray-500 uppercase">
-        {label}
-      </label>
-
-      <div className="flex items-center border border-white/10 rounded-md px-3 py-3 bg-black/40 focus-within:border-yellow-500 transition">
-        {icon && <span className="mr-2 text-gray-500">{icon}</span>}
-        <input
-          {...props}
-          className="w-full bg-transparent outline-none text-sm text-white placeholder-gray-500"
-        />
-        {rightIcon && <span className="ml-2 cursor-pointer text-gray-500">{rightIcon}</span>}
-      </div>
-    </div>
-  );
+  
 
   return (
 <>

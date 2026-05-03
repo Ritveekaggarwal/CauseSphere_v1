@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import Home from "../pages/Home.jsx";
+// import Home from "../pages/Home.jsx";
 import { Link } from "react-router-dom";
 
 
@@ -18,7 +18,8 @@ const navItems = [
   { name: "About", path: "/#about" },
   { name: "Impact", path: "/#impact" },
   { name: "Discover", path: "/#discover" },
-  { name: "Start a Campaign", path: "/signup" },
+  // { name: "Start a Campaign", path: "/signup" },
+  { name: "Start a Campaign", path: "/start-campaign" }
 ];
 
 export const Navbar = () => {
@@ -35,7 +36,7 @@ const [dropdown, setDropdown] = useState(false);
   }, []);
 
 useEffect(() => {
-  fetch("/api/auth/me", {
+  fetch("http://localhost:5000/api/auth/me", {
     credentials: "include",
   })
     .then(res => res.json())
@@ -69,6 +70,12 @@ useEffect(() => {
               key={item.name}
               to={item.path}
               onClick={() => setOpen(false)}
+               onClick={(e) => {
+    if (item.name === "Start a Campaign" && !user) {
+      e.preventDefault();
+      window.location.href = "/login";
+    }
+  }}
               className="text-sm tracking-widest uppercase text-zinc-400 hover:text-white transition-colors"
             >
               {/* <span className="text-amber-400 mr-2 text-[10px]">0{i + 1}</span> */}
@@ -115,7 +122,7 @@ useEffect(() => {
     {/* ✅ THIS IS WHERE LOGOUT GOES */}
     <button
       onClick={async () => {
-        await fetch("/api/auth/logout", {
+        await fetch("http://localhost:5000/api/auth/logout", {
           method: "POST",
           credentials: "include",
         });

@@ -3,7 +3,14 @@ import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import authRoutes from "./routes/auth.js";
+import { config } from "./config/config.js";
+
+
+import authRoutes from "./routes/auth.routes.js";
+import campaignRoutes from "./routes/campaign.router.js";
+
+
+
 
 dotenv.config();
 
@@ -17,12 +24,13 @@ app.use(cors({
   credentials: true,
 }));
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(config.mongoURI)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
 
 app.use("/api/auth", authRoutes);
+app.use("/api/campaigns", campaignRoutes);
 
-app.listen(process.env.PORT, () =>
-  console.log(`Server running on ${process.env.PORT}`)
-);
+app.listen(config.port, () => {
+  console.log(`🚀 Server running on port ${config.port}`);
+});

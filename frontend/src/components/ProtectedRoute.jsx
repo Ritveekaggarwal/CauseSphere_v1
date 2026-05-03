@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
   const [user, setUser] = useState(null);
+  const location = useLocation(); // 🔥 important
 
   useEffect(() => {
-    fetch("/api/auth/me", {
+    fetch("http://localhost:5000/api/auth/me", {
       credentials: "include",
     })
       .then(res => res.json())
@@ -13,8 +14,19 @@ const ProtectedRoute = ({ children }) => {
       .catch(() => setUser(false));
   }, []);
 
+  // loading
   if (user === null) return null;
-  if (!user) return <Navigate to="/login" />;
+
+  // not logged in → redirect with state
+  if (!user) {
+    return (
+      <Navigate
+        to="/login"
+        state={{ from: location.pathname }} // 🔥 THIS FIXES YOUR FLOW
+        replace
+      />
+    );
+  }
 
   return children;
 };
