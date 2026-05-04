@@ -155,7 +155,7 @@ useEffect(() => {
             </div>
 
             {/* RIGHT SIDE - IMPACT CARD */}
-            <div className="rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur p-6 md:p-8">
+            <div className="rounded-3xl border border-white/10 bg-white/2 backdrop-blur p-6 md:p-8">
 
               <div className="flex justify-between items-center mb-6">
                 <p className="text-[10px] tracking-widest uppercase text-amber-400 flex items-center gap-2">

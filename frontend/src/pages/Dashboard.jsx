@@ -158,7 +158,7 @@ export default function Dashboard() {
 
       <div className="min-h-screen bg-[#0b0b0c] text-white pt-24 pb-20 px-6 lg:px-12">
 
-        <div className="fixed bottom-[-150px] left-[-150px] w-[600px] h-[600px] bg-[#e0b24a]/20 blur-[180px]" />
+        <div className="fixed -bottom-37.5 -left-37.5 w-150 h-150 bg-[#e0b24a]/20 blur-[180px]" />
 
         {/* HEADER */}
         <div className="max-w-6xl mx-auto mb-12">
@@ -258,7 +258,7 @@ export default function Dashboard() {
         {/* ✅ EDIT MODAL */}
         {editOpen && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-            <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 w-[500px] space-y-4">
+            <div className="bg-zinc-900 border border-white/10 rounded-2xl p-6 w-125 space-y-4">
 
               <h2 className="text-lg font-semibold">Edit Campaign</h2>
 
@@ -282,7 +282,7 @@ export default function Dashboard() {
 
 {ended && (
   <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-    <div className="bg-zinc-900 border border-yellow-500 rounded-2xl px-10 py-10 text-center w-[420px]">
+    <div className="bg-zinc-900 border border-yellow-500 rounded-2xl px-10 py-10 text-center w-105">
 
       <h2 className="font-serif text-2xl mb-3">
         Campaign Closed
