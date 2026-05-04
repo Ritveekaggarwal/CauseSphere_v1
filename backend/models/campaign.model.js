@@ -74,23 +74,35 @@ const campaignSchema = new mongoose.Schema(
       default: true,
     },
         donations: [
-  {
-    donor: {
-      type: String,
-      default: "Anonymous",
-    },
-    amount: {
-      type: Number,
-      required: true,
-    },
-    at: {
-      type: Date,
-      default: Date.now,
-    },
-  },
+  // {
+  //   donor: {
+  //     type: String,
+  //     default: "Anonymous",
+  //   },
+  //   amount: {
+  //     type: Number,
+  //     required: true,
+  //   },
+  //   at: {
+  //     type: Date,
+  //     default: Date.now,
+  //   },
+  // },
 ],
   },
   { timestamps: true }
 );
+
+campaignSchema.index({ name: "text", description: "text" });
+
+campaignSchema.index({ category: 1, isActive: 1 });
+
+campaignSchema.index({ raisedAmount: -1 });
+
+campaignSchema.index({ createdAt: -1 });
+
+campaignSchema.index({ endDate: 1 });
+
+campaignSchema.index({ isActive: 1 });
 
 export default mongoose.model("Campaign", campaignSchema);

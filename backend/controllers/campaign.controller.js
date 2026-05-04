@@ -26,11 +26,33 @@ export const createCampaign = async (req, res) => {
 };
 export const getCampaigns = async (req, res) => {
   try {
-    const campaigns = await Campaign.find({ isActive: true })
-      .populate("createdBy", "firstName lastName");
+    const { search, category, sort } = req.query;
+
+    let query = { isActive: true };
+
+    // 🔍 SEARCH
+    if (search) {
+      query.$text = { $search: search };
+    }
+
+    // 🎯 CATEGORY
+    if (category && category !== "All") {
+      query.category = category;
+    }
+
+    // 🔄 SORT
+    let sortOption = {};
+
+    if (sort === "funded") sortOption = { raisedAmount: -1 };
+    if (sort === "newest") sortOption = { createdAt: -1 };
+    if (sort === "ending") sortOption = { endDate: 1 };
+
+    const campaigns = await Campaign.find(query)
+      .sort(sortOption)
+      .limit(50);
 
     res.json(campaigns);
-  } catch {
+  } catch (err) {
     res.status(500).json({ msg: "Fetch failed" });
   }
 };
@@ -89,5 +111,41 @@ export const donateToCampaign = async (req, res) => {
   } catch (err) {
     console.error("DONATION ERROR:", err);
     res.status(500).json({ msg: "Donation failed" });
+  }
+};
+export const updateCampaign = async (req, res) => {
+  try {
+    const campaign = await Campaign.findById(req.params.id);
+
+    if (!campaign) {
+      return res.status(404).json({ msg: "Campaign not found" });
+    }
+
+    if (campaign.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ msg: "Not allowed" });
+    }
+
+    // ✅ update only allowed fields
+    const allowed = [
+      "name",
+      "description",
+      "goal",
+      "endDate",
+      "email",
+      "phone",
+      "upiId",
+    ];
+
+    allowed.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        campaign[field] = req.body[field];
+      }
+    });
+
+    await campaign.save();
+
+    res.json(campaign);
+  } catch (err) {
+    res.status(500).json({ msg: "Update failed" });
   }
 };

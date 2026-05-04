@@ -5,6 +5,7 @@ import {
   getCampaignById,
   closeCampaign,
   donateToCampaign,
+  updateCampaign,
 } from "../controllers/campaign.controller.js";
 
 import { protect } from "../middleware/auth.middleware.js";
@@ -34,6 +35,7 @@ router.get("/:id", getCampaignById);
 router.post("/", protect, createCampaign);
 router.put("/:id/close", protect, isOwner, closeCampaign);
 router.post("/:id/donate", protect, donateToCampaign);
+router.put("/:id", protect, isOwner, updateCampaign);
 
 
 export default router;

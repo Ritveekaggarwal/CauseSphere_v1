@@ -9,6 +9,7 @@ import { config } from "./config/config.js";
 import authRoutes from "./routes/auth.routes.js";
 import campaignRoutes from "./routes/campaign.router.js";
 import paymentRoutes from "./routes/payment.router.js";
+import donationRoutes from "./routes/donation.routes.js";
 
 
 
@@ -33,6 +34,8 @@ mongoose.connect(config.mongoURI)
 app.use("/api/auth", authRoutes);
 app.use("/api/campaigns", campaignRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/donations", donationRoutes);
+
 
 
 app.listen(config.port, () => {
