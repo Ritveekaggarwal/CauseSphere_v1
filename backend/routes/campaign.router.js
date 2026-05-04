@@ -4,18 +4,18 @@ import {
   getCampaigns,
   getCampaignById,
   closeCampaign,
+  donateToCampaign,
 } from "../controllers/campaign.controller.js";
 
 import { protect } from "../middleware/auth.middleware.js";
 import { isOwner } from "../middleware/campaign.middleware.js";
-import Campaign from "../models/campaign.model.js"; // 🔥 required
+import Campaign from "../models/campaign.model.js"; 
+
 
 const router = express.Router();
 
-/* PUBLIC */
 router.get("/", getCampaigns);
 
-/* 🔥 ADD THIS HERE (IMPORTANT POSITION) */
 router.get("/my", protect, async (req, res) => {
   try {
     const campaign = await Campaign.findOne({
@@ -29,11 +29,11 @@ router.get("/my", protect, async (req, res) => {
   }
 });
 
-/* PUBLIC */
 router.get("/:id", getCampaignById);
 
-/* PROTECTED */
 router.post("/", protect, createCampaign);
 router.put("/:id/close", protect, isOwner, closeCampaign);
+router.post("/:id/donate", protect, donateToCampaign);
+
 
 export default router;

@@ -177,23 +177,29 @@ useEffect(() => {
         <div className="max-w-6xl mx-auto grid lg:grid-cols-3 border border-white/10">
 
           {/* DONATIONS */}
-          <div className="lg:col-span-2 p-8 border-r border-white/10">
-            <h2 className="font-serif text-2xl mb-6">Last 10 donations</h2>
+        <div className="lg:col-span-2 p-8 border-r border-white/10">
+  <h2 className="font-serif text-2xl mb-6">Last 10 donations</h2>
 
-            {campaign.donations?.length > 0 ? (
-              campaign.donations.map((d, i) => (
-                <div key={i} className="flex justify-between py-3 border-b border-white/10">
-                  <div>
-                    <p>{d.donor}</p>
-                    <p className="text-xs text-gray-500">recent</p>
-                  </div>
-                  <p className="text-yellow-500">₹{formatINR(d.amount)}</p>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500 text-sm">No donations yet</p>
-            )}
+  {campaign.donations?.length > 0 ? (
+    campaign.donations
+      .slice(-10)       // ✅ take last 10
+      .reverse()        // ✅ latest first
+      .map((d, i) => (
+        <div key={i} className="flex justify-between py-3 border-b border-white/10">
+          <div>
+            <p>{d.donor}</p>
+            {/* <p className="text-xs text-gray-500">recent</p> */}
+            <p className="text-xs text-gray-500">
+  {new Date(d.at).toLocaleDateString()}
+</p>
           </div>
+          <p className="text-yellow-500">₹{formatINR(d.amount)}</p>
+        </div>
+      ))
+  ) : (
+    <p className="text-gray-500 text-sm">No donations yet</p>
+  )}
+</div>
 
           {/* DETAILS */}
           <div className="p-8">

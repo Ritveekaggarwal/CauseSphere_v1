@@ -3,7 +3,6 @@ import { categoryImages } from "../utils/categoryImage.js";
 
 
 
-/* ➕ CREATE CAMPAIGN */
 export const createCampaign = async (req, res) => {
   try {
     const existing = await Campaign.findOne({ createdBy: req.user._id });
@@ -25,7 +24,6 @@ export const createCampaign = async (req, res) => {
     res.status(500).json({ msg: "Create campaign failed" });
   }
 };
-/* 📥 GET ALL */
 export const getCampaigns = async (req, res) => {
   try {
     const campaigns = await Campaign.find({ isActive: true })
@@ -36,8 +34,6 @@ export const getCampaigns = async (req, res) => {
     res.status(500).json({ msg: "Fetch failed" });
   }
 };
-
-/* 📄 GET ONE */
 export const getCampaignById = async (req, res) => {
   try {
     const campaign = await Campaign.findById(req.params.id);
@@ -49,8 +45,6 @@ export const getCampaignById = async (req, res) => {
     res.status(500).json({ msg: "Error" });
   }
 };
-
-/* ❌ CLOSE CAMPAIGN */
 export const closeCampaign = async (req, res) => {
   try {
     const campaign = await Campaign.findById(req.params.id);
@@ -67,5 +61,33 @@ export const closeCampaign = async (req, res) => {
     res.json({ msg: "Campaign closed" });
   } catch {
     res.status(500).json({ msg: "Error" });
+  }
+};
+export const donateToCampaign = async (req, res) => {
+  try {
+    const { amount, donor } = req.body;
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ msg: "Invalid amount" });
+    }
+
+    const campaign = await Campaign.findById(req.params.id);
+    if (!campaign) {
+      return res.status(404).json({ msg: "Campaign not found" });
+    }
+
+    campaign.donations.push({
+      donor: donor || "Anonymous", // 👈 fallback
+      amount,
+    });
+
+    campaign.raisedAmount += amount;
+
+    await campaign.save();
+
+    res.json({ msg: "Donation successful", campaign });
+  } catch (err) {
+    console.error("DONATION ERROR:", err);
+    res.status(500).json({ msg: "Donation failed" });
   }
 };

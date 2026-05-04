@@ -73,6 +73,22 @@ const campaignSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+        donations: [
+  {
+    donor: {
+      type: String,
+      default: "Anonymous",
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    at: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+],
   },
   { timestamps: true }
 );

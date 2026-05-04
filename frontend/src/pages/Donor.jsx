@@ -65,7 +65,6 @@ const Donor = () => {
       c.description?.toLowerCase().includes(query.toLowerCase());
 
     const matchesCategory =
-      category === "All" ||
       category === "All" || category === c.category
 
     return matchesQuery && matchesCategory;

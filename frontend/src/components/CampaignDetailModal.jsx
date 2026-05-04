@@ -14,6 +14,8 @@ export default function CampaignDetailModal({ campaign, open, onClose }) {
   const [customAmount, setCustomAmount] = useState("");
   const [method, setMethod] = useState("upi");
   const [copied, setCopied] = useState(false);
+  const [isAnonymous, setIsAnonymous] = useState(true);
+const [donorName, setDonorName] = useState("");
 
   // ✅ NEW STATES
   const [paymentStatus, setPaymentStatus] = useState("idle"); // idle | processing | success | failed
@@ -37,35 +39,35 @@ export default function CampaignDetailModal({ campaign, open, onClose }) {
 
   // ✅ PAYMENT HANDLER (NO FAKE SUCCESS)
   const handlePayment = async () => {
-    try {
-      setPaymentStatus("processing");
+  try {
+    setPaymentStatus("processing");
 
-      // 🔗 BACKEND CALL (you will replace this later)
-      const res = await fetch("/api/donate/create-order", {
+    const res = await fetch(
+      `http://localhost:5000/api/campaigns/${campaign._id}/donate`,
+      {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          campaignId: campaign._id || campaign.id,
-          amount: finalAmount
-        })
-      });
+          amount: finalAmount,
+          donor: isAnonymous ? "Anonymous" : donorName,
+        }),
+      }
+    );
 
-      const data = await res.json();
+    const data = await res.json();
 
-      // ⚠️ TEMP SIMULATION (remove after Razorpay integration)
-      setTimeout(() => {
-        setPaymentStatus("success");
-        setStep("success");
-      }, 1500);
+    if (!res.ok) throw new Error(data.msg);
 
-    } catch (err) {
-      console.error(err);
-      setPaymentStatus("failed");
-    }
-  };
+    setPaymentStatus("success");
+    setStep("success");
 
+  } catch (err) {
+    console.error(err);
+    setPaymentStatus("failed");
+  }
+};
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center">
 
@@ -213,7 +215,28 @@ export default function CampaignDetailModal({ campaign, open, onClose }) {
             >
               Continue ₹{finalAmount}
             </button>
+            <div className="space-y-3 mt-4">
+  <label className="flex items-center gap-2 text-sm text-gray-400">
+    <input
+      type="checkbox"
+      checked={isAnonymous}
+      onChange={() => setIsAnonymous(!isAnonymous)}
+    />
+    Donate anonymously
+  </label>
+
+  {!isAnonymous && (
+    <input
+      type="text"
+      placeholder="Enter your name"
+      value={donorName}
+      onChange={(e) => setDonorName(e.target.value)}
+      className="w-full p-3 bg-black border border-white/10 rounded-xl"
+    />
+  )}
+</div>
           </div>
+          
         )}
 
         {/* STEP 3 */}
