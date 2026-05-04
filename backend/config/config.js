@@ -7,6 +7,8 @@ const requiredEnv = [
   "PORT",
   "MONGO_URI",
   "JWT_SECRET",
+  "RAZORPAY_KEY_ID",
+  "RAZORPAY_KEY_SECRET",
 ];
 
 /* ❌ CHECK MISSING ENV */
@@ -23,4 +25,8 @@ export const config = {
   mongoURI: process.env.MONGO_URI,
   jwtSecret: process.env.JWT_SECRET,
   nodeEnv: process.env.NODE_ENV || "development",
-};
+  razorpay: {
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+  },
+};  

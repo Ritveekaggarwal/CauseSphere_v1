@@ -8,6 +8,8 @@ import { config } from "./config/config.js";
 
 import authRoutes from "./routes/auth.routes.js";
 import campaignRoutes from "./routes/campaign.router.js";
+import paymentRoutes from "./routes/payment.router.js";
+
 
 
 
@@ -30,6 +32,8 @@ mongoose.connect(config.mongoURI)
 
 app.use("/api/auth", authRoutes);
 app.use("/api/campaigns", campaignRoutes);
+app.use("/api/payment", paymentRoutes);
+
 
 app.listen(config.port, () => {
   console.log(`🚀 Server running on port ${config.port}`);
