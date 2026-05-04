@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Search,
   Loader2,
   AlertCircle,
 } from "lucide-react";
-
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
 import Campaigncard from "../components/Campaigncard.jsx";
@@ -20,7 +20,7 @@ const CATEGORIES = [
   "other",
 ];
 
-const SORTS = ["Most Funded", "Newest"];
+
 
 // const categoryMap = {
 //   Education: "education",
@@ -43,7 +43,19 @@ const Donor = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+const location = useLocation();
+useEffect(() => {
+  const params = new URLSearchParams(location.search);
+  const id = params.get("campaign");
 
+  if (id) {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }, 500);
+  }
+}, [location]);
+const SORTS = ["Most Funded", "Newest"];
   /* 🔥 FETCH CAMPAIGNS */
   useEffect(() => {
     fetch("http://localhost:5000/api/campaigns")
@@ -189,29 +201,28 @@ const Donor = () => {
           {!loading && !error && sortedCampaigns.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {sortedCampaigns.map((c) => (
-                <Campaigncard
-                  key={c._id}
-                  c={{
-                    ...c,
-                    title: c.name,
-                    target: c.goal,
-                    raised: c.raisedAmount || 0,
-                    urgency: "Medium",
-                    rating: 4.5,
-                    daysLeft: Math.max(
-                      0,
-                      Math.ceil(
-                        (new Date(c.endDate) - new Date()) /
-                        (1000 * 60 * 60 * 24)
-                      )
-                    ),
-                    onOpen: (data) => {
-                      setSelectedCampaign(data);
-                      setOpen(true);
-                    },
-                  }}
-                />
-              ))}
+  <div key={c._id} id={c._id}>
+    <Campaigncard
+      c={{
+        ...c,
+        title: c.name,
+        target: c.goal,
+        raised: c.raisedAmount || 0,
+        daysLeft: Math.max(
+          0,
+          Math.ceil(
+            (new Date(c.endDate) - new Date()) /
+            (1000 * 60 * 60 * 24)
+          )
+        ),
+        onOpen: (data) => {
+          setSelectedCampaign(data);
+          setOpen(true);
+        },
+      }}
+    />
+  </div>
+))}
             </div>
           )}
 
