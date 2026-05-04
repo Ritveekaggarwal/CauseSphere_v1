@@ -1,9 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
-  ChevronLeft,
-  ChevronRight,
-  SlidersHorizontal,
   Loader2,
   AlertCircle,
 } from "lucide-react";
@@ -13,35 +10,79 @@ import { Footer } from "../components/Footer";
 import Campaigncard from "../components/Campaigncard.jsx";
 import CampaignDetailModal from "../components/CampaignDetailModal.jsx";
 
-// import mockCampaigns from "../data/mockCampaigns";
+const CATEGORIES = [
+  "All",
+  "medical",
+  "education",
+  "animals",
+  "environment",
+  "ngo",
+  "other",
+];
 
-const CATEGORIES = ["All", "Education", "Clean Water", "Climate", "Health", "Disaster Relief", "Animal Welfare"];
-const URGENCIES  = ["All", "Low", "Medium", "High"];
-const SORTS      = ["Most Funded", "Newest", "Most Urgent", "Ending Soon"];
+const SORTS = ["Most Funded", "Newest"];
+
+// const categoryMap = {
+//   Education: "education",
+//   Health: "medical",
+//   "Animal Welfare": "animals",
+//   Climate: "environment",
+//   "Disaster Relief": "other",
+//   // "Clean Water": "other",
+// };
 
 const Donor = () => {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
-  const [urgency, setUrgency] = useState("All");
   const [sort, setSort] = useState("Most Funded");
   const [page, setPage] = useState(1);
 
-  // ✅ MODAL STATE
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [open, setOpen] = useState(false);
 
-const [campaigns, setCampaigns] = useState([]);
-const [loading, setLoading] = useState(true);
-const [error, setError] = useState(null);
+  const [campaigns, setCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-const total = campaigns.length;
-const totalPages = 1;
+  /* 🔥 FETCH CAMPAIGNS */
+  useEffect(() => {
+    fetch("http://localhost:5000/api/campaigns")
+      .then((res) => res.json())
+      .then((data) => {
+        setCampaigns(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Failed to load campaigns");
+        setLoading(false);
+      });
+  }, []);
 
-  // handlers
-  const handleCategory = (c) => { setCategory(c); setPage(1); };
-  const handleUrgency  = (u) => { setUrgency(u);  setPage(1); };
-  const handleSort     = (s) => { setSort(s);     setPage(1); };
-  const handleQuery    = (e) => { setQuery(e.target.value); setPage(1); };
+  /* 🔍 FILTER */
+  const filteredCampaigns = campaigns.filter((c) => {
+    const matchesQuery =
+      c.name?.toLowerCase().includes(query.toLowerCase()) ||
+      c.description?.toLowerCase().includes(query.toLowerCase());
+
+    const matchesCategory =
+      category === "All" ||
+      category === "All" || category === c.category
+
+    return matchesQuery && matchesCategory;
+  });
+
+  /* 🔄 SORT */
+  const sortedCampaigns = [...filteredCampaigns].sort((a, b) => {
+    if (sort === "Newest") {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+
+    if (sort === "Most Funded") {
+      return (b.raisedAmount || 0) - (a.raisedAmount || 0);
+    }
+
+    return 0;
+  });
 
   return (
     <main
@@ -50,7 +91,7 @@ const totalPages = 1;
     >
       <Navbar />
 
-      {/* ── HEADER ───────────────── */}
+      {/* HEADER */}
       <section className="pt-36 md:pt-44 pb-12 border-b border-(--border)">
         <div className="mx-auto max-w-400 px-6 md:px-12">
 
@@ -66,7 +107,7 @@ const totalPages = 1;
               <span className="italic">worth your kindness.</span>
             </h1>
             <p className="text-sm text-(--text-secondary) max-w-md leading-relaxed">
-              Browse verified campaigns from across the country.
+              {/* Browse verified campaigns from across the country. */}
             </p>
           </div>
 
@@ -76,7 +117,10 @@ const totalPages = 1;
               <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4" />
               <input
                 value={query}
-                onChange={handleQuery}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setPage(1);
+                }}
                 placeholder="Search..."
                 className="w-full h-14 pl-14 pr-5 rounded-full bg-(--bg-secondary) border border-(--border)"
               />
@@ -84,7 +128,10 @@ const totalPages = 1;
 
             <select
               value={sort}
-              onChange={(e) => handleSort(e.target.value)}
+              onChange={(e) => {
+                setSort(e.target.value);
+                setPage(1);
+              }}
               className="h-14 px-4 rounded-full bg-(--bg-secondary) border border-(--border)"
             >
               {SORTS.map((s) => (
@@ -94,31 +141,36 @@ const totalPages = 1;
           </div>
 
           {/* CATEGORY */}
-          <div className="mt-8 flex flex-wrap gap-2">
-            {CATEGORIES.map((c) => (
-              <button
-                key={c}
-                onClick={() => handleCategory(c)}
-                className={`px-4 py-2 rounded-full text-xs ${
-                  category === c
-                    ? "bg-amber-400 text-black"
-                    : "border border-(--border)"
-                }`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
+        <div className="mt-8 flex flex-wrap gap-2">
+  {CATEGORIES.map((c) => (
+    <button
+      key={c}
+      onClick={() => {
+        setCategory(c);
+        setPage(1);
+      }}
+      className={`px-4 py-2 rounded-full text-xs ${
+        category === c
+          ? "bg-amber-400 text-black"
+          : "border border-(--border)"
+      }`}
+    >
+      {c === "All"
+        ? "All"
+        : c.charAt(0).toUpperCase() + c.slice(1)}
+    </button>
+  ))}
+</div>
         </div>
       </section>
 
-      {/* ── GRID ───────────────── */}
+      {/* GRID */}
       <section className="py-16">
         <div className="mx-auto max-w-400 px-6 md:px-12">
 
           {!loading && !error && (
             <p className="mb-8 text-sm">
-              <span className="font-semibold">{total}</span> campaigns found
+              <span className="font-semibold">{sortedCampaigns.length}</span> campaigns found
             </p>
           )}
 
@@ -135,14 +187,25 @@ const totalPages = 1;
             </div>
           )}
 
-          {/* ✅ FIXED CARD CLICK */}
-          {!loading && !error && campaigns.length > 0 && (
+          {!loading && !error && sortedCampaigns.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {campaigns.map((c) => (
+              {sortedCampaigns.map((c) => (
                 <Campaigncard
-                  key={c._id || c.id}
+                  key={c._id}
                   c={{
                     ...c,
+                    title: c.name,
+                    target: c.goal,
+                    raised: c.raisedAmount || 0,
+                    urgency: "Medium",
+                    rating: 4.5,
+                    daysLeft: Math.max(
+                      0,
+                      Math.ceil(
+                        (new Date(c.endDate) - new Date()) /
+                        (1000 * 60 * 60 * 24)
+                      )
+                    ),
                     onOpen: (data) => {
                       setSelectedCampaign(data);
                       setOpen(true);
@@ -156,7 +219,7 @@ const totalPages = 1;
         </div>
       </section>
 
-      {/* ✅ FIXED MODAL */}
+      {/* MODAL */}
       <CampaignDetailModal
         campaign={selectedCampaign}
         open={open}

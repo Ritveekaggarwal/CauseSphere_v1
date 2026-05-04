@@ -70,23 +70,22 @@ const Campaigncard = ({ c }) => {
 
           {/* Pills */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--bg-primary)]/70 text-[10px] text-[var(--text-primary)]">
-              <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-              {c.rating?.toFixed(1) ?? "—"}
-            </span>
+            {/* <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[var(--bg-primary)]/70 text-[10px] text-[var(--text-primary)]"> */}
+              {/* <Star className="h-3 w-3 fill-amber-400 text-amber-400" /> */}
+              {/* {c.rating?.toFixed(1) ?? "—"} */}
+            {/* </span>
             <span
               className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--bg-primary)]/70 text-[10px] uppercase tracking-wider ${
                 urgencyTone[c.urgency]
               }`}
             >
-              <span className={`h-1.5 w-1.5 rounded-full ${urgencyDot[c.urgency]}`} />
-              {c.urgency} urgency
-            </span>
+              {/* <span className={`h-1.5 w-1.5 rounded-full ${urgencyDot[c.urgency]}`} /> */}
+              {/* {c.urgency} urgency */}
+            {/* </span> */} 
             <span className="px-3 py-1 rounded-full bg-[var(--bg-primary)]/70 text-[10px] text-[var(--text-secondary)]">
               {c.daysLeft}d left
             </span>
           </div>
-
           {/* Progress */}
           <div className="space-y-1.5">
             <div className="flex items-baseline justify-between text-[10px] tracking-wider uppercase">

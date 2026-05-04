@@ -8,15 +8,32 @@ import {
 
 import { protect } from "../middleware/auth.middleware.js";
 import { isOwner } from "../middleware/campaign.middleware.js";
+import Campaign from "../models/campaign.model.js"; // 🔥 required
 
 const router = express.Router();
 
 /* PUBLIC */
-router.get("/", getCampaigns);          // ✅ get all campaigns
-router.get("/:id", getCampaignById);    // ✅ get single
+router.get("/", getCampaigns);
+
+/* 🔥 ADD THIS HERE (IMPORTANT POSITION) */
+router.get("/my", protect, async (req, res) => {
+  try {
+    const campaign = await Campaign.findOne({
+      createdBy: req.user._id,
+    });
+
+
+    res.json(campaign);
+  } catch (err) {
+    res.status(500).json({ msg: "Error fetching campaign" });
+  }
+});
+
+/* PUBLIC */
+router.get("/:id", getCampaignById);
 
 /* PROTECTED */
-router.post("/", protect, createCampaign);             // ✅ create
-router.put("/:id/close", protect, isOwner, closeCampaign); // ✅ close (owner only)
+router.post("/", protect, createCampaign);
+router.put("/:id/close", protect, isOwner, closeCampaign);
 
 export default router;

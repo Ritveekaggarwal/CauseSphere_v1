@@ -1,34 +1,22 @@
 import Campaign from "../models/campaign.model.js";
 import { categoryImages } from "../utils/categoryImage.js";
 
+
+
 /* ➕ CREATE CAMPAIGN */
 export const createCampaign = async (req, res) => {
   try {
-    const {
-      name,
-      description,
-      goal,
-      category,
-      endDate,
-      email,
-      phone,
-      payoutMethod,
-      upiId,
-      idDoc,
-    } = req.body;
+    const existing = await Campaign.findOne({ createdBy: req.user._id });
+
+    if (existing) {
+      return res.status(400).json({
+        msg: "You already have a campaign",
+      });
+    }
 
     const campaign = await Campaign.create({
-      name,
-      description,
-      goal,
-      category,
-      image: categoryImages[category], // 🔥 auto image
-      endDate,
-      email,
-      phone,
-      payoutMethod,
-      upiId,
-      idDoc,
+      ...req.body,
+      image: categoryImages[req.body.category],
       createdBy: req.user._id,
     });
 
@@ -37,7 +25,6 @@ export const createCampaign = async (req, res) => {
     res.status(500).json({ msg: "Create campaign failed" });
   }
 };
-
 /* 📥 GET ALL */
 export const getCampaigns = async (req, res) => {
   try {

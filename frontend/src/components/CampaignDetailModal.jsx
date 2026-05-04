@@ -92,9 +92,9 @@ export default function CampaignDetailModal({ campaign, open, onClose }) {
         <span className="px-3 py-1 text-[10px] tracking-widest bg-black/60 border border-white/10 rounded-full text-amber-400">
           {campaign.category?.toUpperCase() || "CAUSE"}
         </span>
-        <span className="px-3 py-1 text-[10px] tracking-widest bg-black/60 border border-white/10 rounded-full text-red-400">
+        {/* <span className="px-3 py-1 text-[10px] tracking-widest bg-black/60 border border-white/10 rounded-full text-red-400">
           {campaign.urgency?.toUpperCase() || "HIGH"}
-        </span>
+        </span> */}
       </div>
     </div>
 
@@ -117,10 +117,10 @@ export default function CampaignDetailModal({ campaign, open, onClose }) {
 
         {/* META */}
         <div className="flex items-center justify-between text-xs border-y border-white/10 py-4 mb-6">
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <Star size={14} className="text-amber-400" />
             {campaign.rating}
-          </div>
+          </div> */}
 
           <div className="flex items-center gap-2">
             <Clock size={14} />

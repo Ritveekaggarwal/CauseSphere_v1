@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 // import Home from "../pages/Home.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 // useEffect(() => {
@@ -26,8 +26,8 @@ export const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
-const [user, setUser] = useState(null);
-const [dropdown, setDropdown] = useState(false);
+  const [user, setUser] = useState(null);
+  const [dropdown, setDropdown] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -35,17 +35,47 @@ const [dropdown, setDropdown] = useState(false);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-useEffect(() => {
-  fetch("http://localhost:5000/api/auth/me", {
-    credentials: "include",
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.user) setUser(data.user);
+  useEffect(() => {
+    fetch("http://localhost:5000/api/auth/me", {
+      credentials: "include",
     })
-    .catch(() => setUser(null));
-}, []);
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) setUser(data.user);
+      })
+      .catch(() => setUser(null));
+  }, []);
 
+
+
+  const navigate = useNavigate();
+
+  const handleStartCampaign = async (e) => {
+    e.preventDefault();
+
+    try {
+      // not logged in
+      if (!user) {
+        navigate("/login", { state: { from: "/start-campaign" } });
+        return;
+      }
+
+      // check if campaign exists
+      const res = await fetch("http://localhost:5000/api/campaigns/my", {
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (data) {
+        navigate("/dashboard"); // already has campaign
+      } else {
+        navigate("/start-campaign"); // create new
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <header
@@ -69,16 +99,15 @@ useEffect(() => {
             <Link
               key={item.name}
               to={item.path}
-              onClick={() => setOpen(false)}
-               onClick={(e) => {
-    if (item.name === "Start a Campaign" && !user) {
-      e.preventDefault();
-      window.location.href = "/login";
-    }
-  }}
+              onClick={(e) => {
+                setOpen(false);
+
+                if (item.name === "Start a Campaign") {
+                  handleStartCampaign(e);
+                }
+              }}
               className="text-sm tracking-widest uppercase text-zinc-400 hover:text-white transition-colors"
             >
-              {/* <span className="text-amber-400 mr-2 text-[10px]">0{i + 1}</span> */}
               {item.name}
             </Link>
           ))}
@@ -88,59 +117,59 @@ useEffect(() => {
         {/* CTA + Mobile Toggle */}
 
 
-      <div className="relative hidden md:block">
-  {!user ? (
-    <Link
-      to="/login"
-      className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 text-zinc-950 text-xs tracking-widest uppercase font-bold hover:shadow-[0_0_24px_rgba(251,191,36,0.4)] transition-all duration-500 hover:scale-[1.03]"
-    >
-      GET STARTED
-      <span className="h-px w-6 bg-zinc-950" />
-    </Link>
-  ) : (
-    <>
-      {/* USER BUTTON */}
-      <button
-        onClick={() => setDropdown(!dropdown)}
-        className="px-5 py-3 bg-amber-400 text-black text-xs uppercase font-bold"
-      >
-        {user.name}
-      </button>
+        <div className="relative hidden md:block">
+          {!user ? (
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 text-zinc-950 text-xs tracking-widest uppercase font-bold hover:shadow-[0_0_24px_rgba(251,191,36,0.4)] transition-all duration-500 hover:scale-[1.03]"
+            >
+              GET STARTED
+              <span className="h-px w-6 bg-zinc-950" />
+            </Link>
+          ) : (
+            <>
+              {/* USER BUTTON */}
+              <button
+                onClick={() => setDropdown(!dropdown)}
+                className="px-5 py-3 bg-amber-400 text-black text-xs uppercase font-bold"
+              >
+                {user.name}
+              </button>
 
-      {/* DROPDOWN */}
-      {dropdown && (
-  <div className="absolute right-0 mt-2 w-40 bg-zinc-900 border border-zinc-800 rounded-lg shadow-lg overflow-hidden">
+              {/* DROPDOWN */}
+              {dropdown && (
+                <div className="absolute right-0 mt-2 w-40 bg-zinc-900 border border-zinc-800 rounded-lg shadow-lg overflow-hidden">
 
-    <Link
-      to="/dashboard"
-      onClick={() => setDropdown(false)}
-      className="block px-4 py-3 text-sm text-white hover:bg-zinc-800"
-    >
-      Dashboard
-    </Link>
+                  <Link
+                    to="/dashboard"
+                    onClick={() => setDropdown(false)}
+                    className="block px-4 py-3 text-sm text-white hover:bg-zinc-800"
+                  >
+                    Dashboard
+                  </Link>
 
-    {/* ✅ THIS IS WHERE LOGOUT GOES */}
-    <button
-      onClick={async () => {
-        await fetch("http://localhost:5000/api/auth/logout", {
-          method: "POST",
-          credentials: "include",
-        });
-        window.location.href = "/login";
-      }}
-      className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-zinc-800"
-    >
-      Logout
-    </button>
+                  {/* ✅ THIS IS WHERE LOGOUT GOES */}
+                  <button
+                    onClick={async () => {
+                      await fetch("http://localhost:5000/api/auth/logout", {
+                        method: "POST",
+                        credentials: "include",
+                      });
+                      window.location.href = "/login";
+                    }}
+                    className="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-zinc-800"
+                  >
+                    Logout
+                  </button>
 
-  </div>
-)}
+                </div>
+              )}
 
 
 
-    </>
-  )}
-</div>
+            </>
+          )}
+        </div>
 
 
 

@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 // import StartCampaign from "../pages/StartCampaign.jsx";
 
 
@@ -27,6 +28,48 @@ const steps = [
 ];
 
 export const Start_a_Campaign = () => {
+
+
+const navigate = useNavigate();
+const [user, setUser] = useState(null);
+
+useEffect(() => {
+  fetch("http://localhost:5000/api/auth/me", {
+    credentials: "include",
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.user) setUser(data.user);
+    })
+    .catch(() => setUser(null));
+}, []);
+
+
+const handleStartCampaign = async () => {
+  try {
+    // not logged in
+    if (!user) {
+      navigate("/login", { state: { from: "/start-campaign" } });
+      return;
+    }
+
+    // check if campaign exists
+    const res = await fetch("http://localhost:5000/api/campaigns/my", {
+      credentials: "include",
+    });
+
+    const data = await res.json();
+
+    if (data) {
+      navigate("/dashboard"); // already has campaign
+    } else {
+      navigate("/start-campaign"); // create new
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
   return (
     <section
       // id="start"
@@ -80,7 +123,7 @@ export const Start_a_Campaign = () => {
 
         {/* CTA */}
         <div className="mt-24 flex flex-col items-center text-center">
-          <Link
+          {/* <Link
             to="/start-campaign"
             onClick={() => {
               if (!user) {
@@ -93,7 +136,17 @@ export const Start_a_Campaign = () => {
           >
             Start your campaign
             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-500" />
-          </Link>
+          </Link> */}
+
+<button
+  onClick={handleStartCampaign}
+  className="group inline-flex items-center gap-4 px-10 py-5 bg-amber-400 text-zinc-950 text-xs tracking-widest uppercase font-bold hover:bg-amber-400 hover:shadow-[0_0_32px_rgba(251,191,36,0.45)] transition-all duration-500 hover:scale-[1.03]"
+>
+  Start your campaign
+  <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-500" />
+</button>
+
+
           <p className="mt-6 text-[10px] tracking-widest uppercase text-zinc-500">
             Free to start · No platform fee · Verified within 48 hours
           </p>

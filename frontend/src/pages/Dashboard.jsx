@@ -13,18 +13,21 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   /* 🔗 FETCH FROM BACKEND */
-  useEffect(() => {
-    fetch("http://localhost:5000/api/campaigns", {
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.length > 0) {
-          setCampaign(data[0]); // for now first campaign
-        }
-      })
-      .catch((err) => console.error(err));
-  }, []);
+useEffect(() => {
+  fetch("http://localhost:5000/api/campaigns/my", {
+    credentials: "include",
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("CAMPAIGN:", data);
+
+      if (data && data._id) {
+        setCampaign(data);
+      } else {
+        setCampaign(null);
+      }
+    });
+}, []);
 
   /* ⏳ AUTO REDIRECT AFTER CLOSE */
   useEffect(() => {
