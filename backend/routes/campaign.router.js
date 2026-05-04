@@ -8,7 +8,7 @@ import {
   updateCampaign,
 } from "../controllers/campaign.controller.js";
 
-import { protect } from "../middleware/auth.middleware.js";
+import { protect } from "../middleware/auth.js";
 import { isOwner } from "../middleware/campaign.middleware.js";
 import Campaign from "../models/campaign.model.js"; 
 
