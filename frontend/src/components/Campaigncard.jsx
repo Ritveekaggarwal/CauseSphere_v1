@@ -25,7 +25,7 @@ const Campaigncard = ({ c }) => {
       {/* Cover image */}
       <div className="relative aspect-[4/5] overflow-hidden">
         <img
-          src={c.image}
+          src={c.image }
           alt={c.title}
           loading="lazy"
           className="h-full w-full object-cover grayscale-[40%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
