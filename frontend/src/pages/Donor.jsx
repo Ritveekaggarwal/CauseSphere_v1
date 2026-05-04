@@ -13,7 +13,7 @@ import { Footer } from "../components/Footer";
 import Campaigncard from "../components/Campaigncard.jsx";
 import CampaignDetailModal from "../components/CampaignDetailModal.jsx";
 
-import mockCampaigns from "../data/mockCampaigns";
+// import mockCampaigns from "../data/mockCampaigns";
 
 const CATEGORIES = ["All", "Education", "Clean Water", "Climate", "Health", "Disaster Relief", "Animal Welfare"];
 const URGENCIES  = ["All", "Low", "Medium", "High"];
@@ -30,12 +30,12 @@ const Donor = () => {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [open, setOpen] = useState(false);
 
-  // ✅ DEFINE BEFORE USE (FIXED BUG)
-  const campaigns = mockCampaigns;
-  const total = campaigns.length;
-  const totalPages = 1;
-  const loading = false;
-  const error = null;
+const [campaigns, setCampaigns] = useState([]);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+
+const total = campaigns.length;
+const totalPages = 1;
 
   // handlers
   const handleCategory = (c) => { setCategory(c); setPage(1); };

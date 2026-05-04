@@ -1,61 +1,52 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
-import { ArrowLeft, Users, TrendingUp, Clock, IndianRupee } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
 const formatINR = (n) =>
   new Intl.NumberFormat("en-IN").format(n);
 
 export default function Dashboard() {
   const [campaign, setCampaign] = useState(null);
   const [ended, setEnded] = useState(false);
+  const [countdown, setCountdown] = useState(10);
   const navigate = useNavigate();
-const [countdown, setCountdown] = useState(10);
 
-  /* 🔗 FUTURE BACKEND FETCH */
+  /* 🔗 FETCH FROM BACKEND */
   useEffect(() => {
-    // replace with API later
-    const fake = {
-      name: "Help Aarav",
-      description: "Medical emergency support",
-      goal: 50000,
-      raised: 5300,
-      category: "Medical",
-      endDate: "2026-05-10",
-      createdAt: new Date().toISOString(),
-      payoutMethod: "upi",
-      upiId: "test@upi",
-      donations: [
-        { donor: "Anonymous", amount: 500, at: new Date() },
-        { donor: "R Mehta", amount: 1500, at: new Date() },
-        { donor: "A Khan", amount: 2000, at: new Date() },
-      ],
-    };
-
-    setCampaign(fake);
+    fetch("http://localhost:5000/api/campaigns", {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.length > 0) {
+          setCampaign(data[0]); // for now first campaign
+        }
+      })
+      .catch((err) => console.error(err));
   }, []);
 
+  /* ⏳ AUTO REDIRECT AFTER CLOSE */
+  useEffect(() => {
+    if (!ended) return;
 
-useEffect(() => {
-  if (!ended) return;
+    setCountdown(10);
 
-  setCountdown(10);
+    const interval = setInterval(() => {
+      setCountdown((c) => {
+        if (c <= 1) {
+          clearInterval(interval);
+          navigate("/start-campaign");
+          return 0;
+        }
+        return c - 1;
+      });
+    }, 1000);
 
-  const interval = setInterval(() => {
-    setCountdown((c) => {
-      if (c <= 1) {
-        clearInterval(interval);
-        navigate("/start-campaign"); // 🔁 redirect page
-        return 0;
-      }
-      return c - 1;
-    });
-  }, 1000);
+    return () => clearInterval(interval);
+  }, [ended, navigate]);
 
-  return () => clearInterval(interval);
-}, [ended, navigate]);
-
-  /* ⏳ AUTO END */
+  /* ⏳ AUTO END BASED ON DATE */
   useEffect(() => {
     if (!campaign) return;
 
@@ -69,30 +60,46 @@ useEffect(() => {
   const stats = useMemo(() => {
     if (!campaign) return {};
 
+    const donations = campaign.donations || [];
+
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 
     const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
-    const today = campaign.donations
+    const today = donations
       .filter((d) => new Date(d.at) >= todayStart)
       .reduce((s, d) => s + d.amount, 0);
 
-    const week = campaign.donations
+    const week = donations
       .filter((d) => new Date(d.at).getTime() >= weekAgo)
       .reduce((s, d) => s + d.amount, 0);
 
-    const pct = Math.min(100, Math.round((campaign.raised / campaign.goal) * 100));
+    const pct = Math.min(
+      100,
+      Math.round(((campaign.raisedAmount || 0) / campaign.goal) * 100)
+    );
 
     return {
       today,
       week,
       pct,
-      donors: campaign.donations.length,
+      donors: donations.length,
     };
   }, [campaign]);
 
-  if (!campaign) return null;
+  /* ❌ NO CAMPAIGN */
+  if (!campaign) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen flex items-center justify-center text-white">
+          No campaign found. Start one.
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
@@ -121,10 +128,29 @@ useEffect(() => {
         {/* STATS */}
         <div className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 border border-white/10 mb-12">
 
-          <Stat title="Total raised" value={`₹${formatINR(campaign.raised)}`} sub={`of ₹${formatINR(campaign.goal)}`} />
-          <Stat title="This week" value={`₹${formatINR(stats.week)}`} sub="Last 7 days" />
-          <Stat title="Today" value={`₹${formatINR(stats.today)}`} sub="Since midnight" />
-          <Stat title="Donors" value={stats.donors} sub="Contributions" />
+          <Stat
+            title="Total raised"
+            value={`₹${formatINR(campaign.raisedAmount || 0)}`}
+            sub={`of ₹${formatINR(campaign.goal)}`}
+          />
+
+          <Stat
+            title="This week"
+            value={`₹${formatINR(stats.week || 0)}`}
+            sub="Last 7 days"
+          />
+
+          <Stat
+            title="Today"
+            value={`₹${formatINR(stats.today || 0)}`}
+            sub="Since midnight"
+          />
+
+          <Stat
+            title="Donors"
+            value={stats.donors || 0}
+            sub="Contributions"
+          />
 
         </div>
 
@@ -133,13 +159,13 @@ useEffect(() => {
 
           <div className="flex justify-between mb-4">
             <span className="text-sm text-gray-400">Progress</span>
-            <span className="text-yellow-500">{stats.pct}%</span>
+            <span className="text-yellow-500">{stats.pct || 0}%</span>
           </div>
 
           <div className="h-1 bg-white/10">
             <div
               className="h-full bg-yellow-500 transition-all duration-700"
-              style={{ width: `${stats.pct}%` }}
+              style={{ width: `${stats.pct || 0}%` }}
             />
           </div>
         </div>
@@ -151,15 +177,19 @@ useEffect(() => {
           <div className="lg:col-span-2 p-8 border-r border-white/10">
             <h2 className="font-serif text-2xl mb-6">Last 10 donations</h2>
 
-            {campaign.donations.map((d, i) => (
-              <div key={i} className="flex justify-between py-3 border-b border-white/10">
-                <div>
-                  <p>{d.donor}</p>
-                  <p className="text-xs text-gray-500">recent</p>
+            {campaign.donations?.length > 0 ? (
+              campaign.donations.map((d, i) => (
+                <div key={i} className="flex justify-between py-3 border-b border-white/10">
+                  <div>
+                    <p>{d.donor}</p>
+                    <p className="text-xs text-gray-500">recent</p>
+                  </div>
+                  <p className="text-yellow-500">₹{formatINR(d.amount)}</p>
                 </div>
-                <p className="text-yellow-500">₹{formatINR(d.amount)}</p>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-gray-500 text-sm">No donations yet</p>
+            )}
           </div>
 
           {/* DETAILS */}
@@ -176,7 +206,16 @@ useEffect(() => {
             {/* CLOSE BUTTON */}
             {!ended && (
               <button
-                onClick={() => setEnded(true)}
+                onClick={async () => {
+                  await fetch(
+                    `http://localhost:5000/api/campaigns/${campaign._id}/close`,
+                    {
+                      method: "PUT",
+                      credentials: "include",
+                    }
+                  );
+                  setEnded(true);
+                }}
                 className="mt-8 w-full bg-yellow-500 text-black py-3 text-xs uppercase"
               >
                 Close Campaign
@@ -187,30 +226,30 @@ useEffect(() => {
 
         {/* FINAL SUMMARY */}
         {ended && (
-  <div className="max-w-4xl mx-auto mt-16 p-10 border border-yellow-500 bg-black/40 text-center">
+          <div className="max-w-4xl mx-auto mt-16 p-10 border border-yellow-500 bg-black/40 text-center">
 
-    <h2 className="font-serif text-3xl mb-4">
-      Campaign Closed
-    </h2>
+            <h2 className="font-serif text-3xl mb-4">
+              Campaign Closed
+            </h2>
 
-    <p className="text-gray-400 mb-4">
-      All details are finalized and recorded.
-    </p>
+            <p className="text-gray-400 mb-4">
+              All details are finalized and recorded.
+            </p>
 
-    <div className="text-xl text-yellow-500">
-      ₹{formatINR(campaign.raised)} raised
-    </div>
+            <div className="text-xl text-yellow-500">
+              ₹{formatINR(campaign.raisedAmount || 0)} raised
+            </div>
 
-    <div className="text-sm text-gray-400 mt-2">
-      from {stats.donors} donors
-    </div>
+            <div className="text-sm text-gray-400 mt-2">
+              from {stats.donors || 0} donors
+            </div>
 
-    <p className="text-xs text-gray-500 mt-6">
-      Redirecting to form in {countdown}s...
-    </p>
+            <p className="text-xs text-gray-500 mt-6">
+              Redirecting to form in {countdown}s...
+            </p>
 
-  </div>
-)}
+          </div>
+        )}
       </div>
 
       <Footer />
